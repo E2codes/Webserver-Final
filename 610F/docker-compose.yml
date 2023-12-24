@@ -1,0 +1,26 @@
+version: '3' # docker version
+services:
+  www:
+    image: php:apache
+    volumes:
+      - "./:/var/www/html" # sync project dir with container web dir
+    ports:
+      - 80:80
+      - 443:443 # for SSL traffic for future security
+    command: ["apache2-foreground"] # use this command to start Apache with PHP
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=php_donutmaker
+      - MYSQL_USER=php_donutmaker
+      - MYSQL_PASSWORD=donuts
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    volumes:
+      - "./db:/docker-entrypoint-initdb.d"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8001:80
+    environment:
+        - PMA_HOST=db
+        - PMA_PORT=3306
